@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Travel Expense Voucher Document Builder</title>
+<style>
+:root{--green:#184f3b;--green2:#267357;--cream:#f4f1e8;--gold:#c8a24b;--ink:#18302a;--line:#d9e0dc;--white:#fff;--muted:#6c7b75}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink);background:#eef2ef}header{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 4vw;position:sticky;top:0;z-index:5}.brand{display:flex;gap:12px;align-items:center}.brand small{display:block;color:var(--muted);margin-top:2px}.seal{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--green);color:#fff;font-weight:800;border:3px solid #d8b65d}.ghost,.secondary,.primary{border:0;border-radius:9px;padding:11px 16px;font-weight:700;cursor:pointer}.ghost,.secondary{background:#eef4f1;color:var(--green)}.primary{background:var(--green);color:#fff}.hero{background:linear-gradient(115deg,#153f31,#267357);color:#fff;padding:44px 6vw 36px;display:flex;justify-content:space-between;gap:30px;align-items:end}.hero h1{font-size:38px;margin:8px 0}.hero p{max-width:680px;color:#dce9e4}.eyebrow{font-size:12px;letter-spacing:2px;color:#e4c66f;font-weight:800}.flow{display:flex;flex-wrap:wrap;gap:9px;align-items:center;font-size:12px}.flow b{padding:8px 10px;background:#ffffff17;border:1px solid #ffffff2b;border-radius:7px}.flow i{opacity:.6}.layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:24px;max-width:1300px;margin:28px auto;padding:0 22px}nav{display:flex;flex-direction:column;gap:6px;align-self:start;position:sticky;top:96px}nav button{display:flex;gap:10px;align-items:center;text-align:left;border:0;background:transparent;padding:10px;border-radius:9px;color:#52625c;cursor:pointer;font-weight:650}nav button span{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:#dde6e1}nav button.active{background:#fff;color:var(--green);box-shadow:0 4px 20px #1d3f3220}nav button.active span{background:var(--green);color:#fff}.card{background:#fff;border-radius:16px;box-shadow:0 8px 32px #1d3f3214;min-height:620px;padding:30px}.step{display:none}.step.active{display:block}.step h2{margin:0 0 6px;font-size:26px}.muted{color:var(--muted);line-height:1.55}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px}.wide{grid-column:1/-1}label{display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:750}input,select,textarea{width:100%;border:1px solid #cfd9d4;border-radius:8px;padding:11px 12px;font:inherit;color:var(--ink);background:#fff}textarea{resize:vertical}.readonly{background:#f1f4f2}.upload{border:1.5px dashed #a8bbb2;border-radius:12px;padding:18px;background:#f8faf9;margin-top:18px}.upload input[type=file]{border:0;padding:6px 0}.upload span{font-weight:500;color:var(--muted)}.tablewrap{overflow:auto;margin:20px 0 10px}table{border-collapse:collapse;min-width:900px;width:100%}th,td{border:1px solid #dce3df;padding:7px}th{background:#eff4f1;font-size:12px}td input{min-width:90px;border:0;padding:7px}.remove{background:#f5e6e4;border:0;border-radius:6px;padding:8px;color:#8b332d}.total{display:flex;justify-content:flex-end;gap:20px;font-size:18px;margin:20px 0}.total strong{color:var(--green)}.actions{display:flex;justify-content:space-between;border-top:1px solid #e3e8e5;margin-top:32px;padding-top:22px}.folder{padding:20px;border-radius:12px;background:#f4f1e8;margin:22px 0}.folder small{display:block;color:#7a725d;margin-bottom:7px}.folder strong{font-size:20px;word-break:break-word}.notice{background:#fff8df;border:1px solid #eedb96;border-radius:10px;padding:14px;line-height:1.5;margin:20px 0}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px}.summary div{background:#f4f7f5;padding:14px;border-radius:9px}.summary small{display:block;color:var(--muted);margin-bottom:5px}.big{margin-right:8px;padding:13px 20px}footer{text-align:center;color:#718079;padding:24px}
+@media(max-width:850px){.hero{display:block}.flow{margin-top:24px}.layout{grid-template-columns:1fr}nav{position:static;flex-direction:row;overflow:auto}nav button{min-width:max-content}.card{padding:20px}.grid{grid-template-columns:1fr}.wide{grid-column:auto}.summary{grid-template-columns:1fr}.hero h1{font-size:30px}}
+/* v0.2: hero banner removed */
+.layout{margin-top:28px}
+
+.previewbar{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}
+.previewPanel{border:1px solid #d8e1dc;background:#f7f9f8;border-radius:12px;min-height:360px;padding:18px;margin-bottom:22px;overflow:auto}
+.previewEmpty{min-height:320px;display:grid;place-items:center;color:#78867f}
+.sheetPreview{background:white;max-width:900px;margin:auto;border:1px solid #cfd7d3;box-shadow:0 5px 18px #1d3f3215;padding:24px}
+.sheetPreview h3{text-align:center;margin:0 0 18px;font-size:19px}.sheetPreview .agency{text-align:center;font-weight:800;margin-bottom:20px}
+.pgrid{display:grid;grid-template-columns:180px 1fr;border-top:1px solid #444;border-left:1px solid #444}.pgrid div{padding:8px;border-right:1px solid #444;border-bottom:1px solid #444;min-height:36px}.pgrid .label{font-weight:700;background:#f5f5f5}.pgrid .full{grid-column:1/-1}
+.previewBtn.selected{background:var(--green);color:#fff}
+
+.detectStatus{margin:16px 0 4px;padding:12px 14px;border-radius:9px;background:#eef4f1;color:#35594b;font-size:13px}
+.detectStatus.ok{background:#e6f4ea;color:#245c38}.detectStatus.warn{background:#fff5dc;color:#775d13}
+label small{font-weight:500;color:#7b8882}.compactgrid{margin-bottom:8px}
+
+/* v0.5 header cleanup */
+.brand{gap:0}
+.mainTitle{font-size:19px;font-weight:800;color:var(--ink)}
+
+
+.hybrid-wrap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(340px,.85fr);gap:18px;margin-top:14px}
+.to-preview{min-height:650px;border:1px solid #cbd5d1;border-radius:12px;background:#f7faf8;overflow:hidden}
+.to-preview iframe,.to-preview img{width:100%;height:650px;border:0;object-fit:contain;background:#fff}
+.to-manual{border:1px solid #cbd5d1;border-radius:12px;padding:16px;background:#fff}
+.to-manual h3{margin-top:0}
+.to-manual label{display:block;font-weight:600;margin:10px 0 5px}
+.to-manual input,.to-manual textarea,.to-manual select{width:100%;box-sizing:border-box}
+.to-manual textarea{min-height:88px;resize:vertical}
+.confirm-to{width:100%;margin-top:16px;padding:12px 16px;border:0;border-radius:9px;background:#176b43;color:white;font-weight:700;cursor:pointer}
+.confirm-to:hover{filter:brightness(.95)}
+.confirm-banner{margin-top:10px;padding:10px 12px;border-radius:8px;background:#eaf7ef;border:1px solid #9bc9aa;display:none}
+@media(max-width:900px){.hybrid-wrap{grid-template-columns:1fr}.to-preview,.to-preview iframe,.to-preview img{height:500px}}
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="mainTitle">Travel Expense Voucher Document Builder</div></div><button class="ghost" id="newBtn">+ New Travel Record</button>
+</header>
+
+<main>
+<div class="layout">
+<nav id="steps">
+<button class="active" data-step="1"><span>1</span>Approved TO</button>
+<button data-step="2"><span>2</span>Itinerary</button>
+<button data-step="3"><span>3</span>DV Front</button>
+<button data-step="4"><span>4</span>DV Back</button>
+<button data-step="5"><span>5</span>ORS</button>
+<button data-step="6"><span>6</span>CNRR</button>
+<button data-step="7"><span>7</span>Accomplishment</button>
+<button data-step="8"><span>8</span>Preview & Generate</button>
+</nav>
+
+<section class="card">
+<form id="tevForm">
+<div class="step active" data-step="1">
+<h2>Approved Travel Order</h2><p class="muted">Upload the approved TO. Enter/review the details below so they can be reused in all forms.</p>
+<label class="upload">Upload Approved TO<input id="toFile" type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"><span id="toFileName">PDF / JPG / PNG / DOCX</span></label>
+<div id="toDetectStatus" class="detectStatus">Upload an Approved TO to extract its travel details. Scanned TOs are read using OCR.</div>
+<div class="hybrid-wrap" id="hybridTO">
+  <div>
+    <h3 style="margin:0 0 8px">Travel Order Preview</h3>
+    <div class="to-preview" id="toPreview"><div style="padding:24px;color:#667">Upload a PDF/JPG/PNG Travel Order to preview it here.</div></div>
+  </div>
+  <div class="to-manual">
+    <h3>Confirm Travel Order Details</h3>
+    <div style="font-size:13px;color:#59645e;margin-bottom:10px">Review the uploaded Travel Order on the left, then type or confirm the details below.</div>
+    <label>TO Number</label><input id="hyTO" placeholder="e.g. 2026-07-11246">
+    <label>Employee / Payee</label><input id="hyEmployee" placeholder="Employee name">
+    <label>Departure Date</label><input id="hyDeparture" type="date">
+    <label>Return Date</label><input id="hyReturn" type="date">
+    <label>Destination</label><textarea id="hyDestination" placeholder="Destination"></textarea>
+    <label>Purpose of Travel</label><textarea id="hyPurpose" placeholder="Specific purpose of the trip"></textarea>
+    <label>Objective(s)</label><textarea id="hyObjective" placeholder="Objective(s), optional"></textarea>
+    <button type="button" class="confirm-to" id="confirmTO">Confirm Travel Order</button>
+    <div class="confirm-banner" id="confirmBanner">Travel Order confirmed. These details are now the master information for the TEV forms.</div>
+  </div>
+</div>
+
+<div class="grid">
+<label>TO Number <small>from uploaded TO</small><input name="toNumber" readonly class="readonly"></label>
+<label>Employee / Payee <small>dropdown appears when multiple names are detected</small>
+<select name="payee" id="employeeSelect" disabled><option value="">Upload TO first</option></select></label>
+<label>Travel Start <small>from uploaded TO</small><input name="travelStart" type="date" readonly class="readonly"></label>
+<label>Destination <small>from uploaded TO</small><input name="destination" readonly class="readonly"></label>
+<label class="wide">Purpose of Travel <small>from uploaded TO</small><textarea name="purpose" rows="3" readonly class="readonly"></textarea></label>
+</div></div>
+
+<div class="step" data-step="2">
+<h2>Itinerary</h2><p class="muted">Fill out online or upload an already completed itinerary.</p>
+<label class="upload">Upload Filled-out Itinerary<input id="itinFile" type="file" accept=".xlsx,.xls,.pdf"><span id="itinFileName">Optional Excel / PDF</span></label>
+<div class="tablewrap"><table id="itinTable"><thead><tr><th>Date</th><th>Place / Route</th><th>Departure</th><th>Arrival</th><th>Transportation</th><th>Fare</th><th>DTE / Per Diem</th><th>Others</th><th></th></tr></thead><tbody></tbody></table></div>
+<button type="button" class="secondary" id="addItin">+ Add itinerary row</button>
+<div class="total">Itinerary Total <strong>₱ <span id="itinTotal">0.00</span></strong></div>
+</div>
+
+<div class="step" data-step="3">
+<h2>Disbursement Voucher — Front</h2>
+<div class="grid">
+<label>Fund Cluster<select name="fundCluster"><option>STO-REG-ALMED</option><option>STO-SEM-ALMED</option><option>STO-FMHFWCROP-ALMED</option><option>LFPA-NSHP-ALMED</option></select></label>
+<label>Payee<input name="dvPayee" data-sync="payee"></label>
+<label>TIN Number<input name="tin"></label><label>ID Number<input name="idNumber"></label>
+<label>TO Number<input name="dvTO" data-sync="toNumber"></label><label>Date<input name="dvDate" type="date"></label>
+<label>Destination<input name="dvDestination" data-sync="destination"></label>
+<label>Responsibility Center <small>automatic from Fund Cluster</small><input name="responsibilityCenter" readonly class="readonly"></label>
+<label>MFO / PAP (PREXC) <small>automatic from Fund Cluster</small><input name="mfoPap" readonly class="readonly"></label>
+<label>Amount<input name="dvAmount" readonly class="readonly"></label>
+<label class="wide">Supervising Agriculturist<select name="supervisor"><option>Engr. Angelica L. Ecito</option><option>Jordan G. Calura</option><option>Ditse Marie L. Tesorero</option><option>John Algen B. Mendez</option><option>Regine Marie B. Sabornido</option></select></label>
+</div></div>
+
+<div class="step" data-step="4">
+<h2>Likod ng DV</h2>
+<div class="grid"><label>Payee<input name="backPayee" readonly class="readonly"></label><label>Amount<input name="backAmount" readonly class="readonly"></label><label class="wide">Fund Source<input name="fundSource" placeholder="Enter fund source"></label></div>
+</div>
+
+<div class="step" data-step="5">
+<h2>Obligation Request and Status (ORS)</h2><p class="muted">Only the dynamic/red entries in your ORS template will be changed.</p>
+<div class="grid">
+<label>Payee<input name="orsPayee" readonly class="readonly"></label>
+<label>Responsibility Center<input name="orsRC" readonly class="readonly"></label>
+<label>Fund / RC Name<input name="orsFund" readonly class="readonly"></label>
+<label>TO Number<input name="orsTO" readonly class="readonly"></label>
+<label>Date<input name="orsDate" readonly class="readonly"></label>
+<label>Destination<input name="orsDestination" readonly class="readonly"></label>
+<label>MFO / PAP<input name="orsMFO" readonly class="readonly"></label>
+<label>UACS Object Code <small>automatic from Fund Cluster</small><input name="uacs" readonly class="readonly"></label>
+<label>Amount<input name="orsAmount" readonly class="readonly"></label>
+<label>Total<input name="orsTotal" readonly class="readonly"></label>
+</div></div>
+
+<div class="step" data-step="6">
+<h2>Certificate Not Requiring Receipt (CNRR)</h2>
+<p class="muted">Form-style encoding para mas mabilis: common TO details are automatic, then add the expenses covered by the certificate.</p>
+<div class="grid compactgrid">
+<label>Payee<input name="cnrrPayee" readonly class="readonly"></label>
+<label>TO Number<input name="cnrrTO" readonly class="readonly"></label>
+<label>Destination<input name="cnrrDestination" readonly class="readonly"></label>
+<label>Itinerary Total<input name="cnrrAmount" readonly class="readonly"></label>
+</div>
+<div class="tablewrap"><table id="cnrrTable"><thead><tr><th>Date</th><th>Particulars / Expense</th><th>Amount</th><th></th></tr></thead><tbody></tbody></table></div>
+<button type="button" class="secondary" id="addCnrr">+ Add CNRR row</button>
+<div class="total">CNRR Total <strong>₱ <span id="cnrrTotal">0.00</span></strong></div>
+<label class="wide">Explanation / Certification<textarea name="cnrrParticulars" rows="4" placeholder="Enter explanation or certification, if needed"></textarea></label>
+</div>
+
+<div class="step" data-step="7">
+<h2>Accomplishment Report</h2>
+<div class="grid">
+<label>Period<input name="accPeriod" readonly class="readonly"></label><label>TO No.<input name="accTO" readonly class="readonly"></label>
+<label class="wide">Purpose of Travel<textarea name="accPurpose" rows="3"></textarea></label>
+<label class="wide">Places Visited<input name="placesVisited"></label>
+<label class="wide">Activities Undertaken<textarea name="activities" rows="5"></textarea></label>
+<label class="wide">Accomplishment / What has been done?<textarea name="accomplishment" rows="6"></textarea></label>
+<label>Remarks<textarea name="remarks" rows="3"></textarea></label><label>BSWM/Mgt. – Needed Action<textarea name="neededAction" rows="3"></textarea></label>
+<label class="wide upload">Attached Pictures<input id="photos" type="file" accept="image/*" multiple><span id="photoCount">Add one or more photos</span></label>
+<label>Prepared & Submitted By<input name="preparedBy" readonly class="readonly"></label><label>Noted By<input name="notedBy"></label>
+</div></div>
+
+<div class="step" data-step="8">
+<h2>Preview & Generate Document Package</h2>
+<div class="previewbar">
+  <button type="button" class="secondary previewBtn" data-preview="DV">Preview DV</button>
+  <button type="button" class="secondary previewBtn" data-preview="ORS">Preview ORS</button>
+  <button type="button" class="secondary previewBtn" data-preview="ITINERARY">Preview Itinerary</button>
+  <button type="button" class="secondary previewBtn" data-preview="CNRR">Preview CNRR</button>
+  <button type="button" class="secondary previewBtn" data-preview="ACCOMPLISHMENT">Preview Accomplishment</button>
+</div>
+<div id="previewPanel" class="previewPanel">
+  <div class="previewEmpty">Select a file above to preview it before generating.</div>
+</div>
+<div class="summary" id="summary"></div>
+<div class="folder"><small>FOLDER NAME</small><strong id="folderName">DESTINATION_DATE_AMOUNT</strong></div>
+<p class="muted">Editable Excel filenames: <b>DESTINATION_DV.xlsx</b>, <b>DESTINATION_ORS.xlsx</b>, <b>DESTINATION_ITINERARY.xlsx</b>, <b>DESTINATION_CNRR.xlsx</b>, <b>DESTINATION_ACCOMPLISHMENT.xlsx</b>, plus the original uploaded TO.</p>
+<div class="notice"><b>Prototype behavior:</b> this first version builds and saves the complete travel record in your browser and prepares the exact document package structure. The Excel-template population/export engine is the next backend step.</div>
+<button type="button" class="primary big" id="savePackage">Save Travel Record</button>
+<button type="button" class="secondary big" id="exportJson">Download Record Backup</button>
+</div>
+
+<div class="actions"><button type="button" class="secondary" id="prev">← Previous</button><button type="button" class="primary" id="next">Next →</button></div>
+</form></section></div>
+</main>
+<footer>BSWM TEV Automation • Local-first prototype</footer>
+<script>
+
+const FUND_MAP={
+ 'STO-REG-ALMED':{rc:'15-03-01-03',mfo:'200000-10000-1000',uacs:'50201010-00',desc:'Travelling Expenses - Local'},
+ 'STO-SEM-ALMED':{rc:'15-03-04-03',mfo:'200000-10000-1000',uacs:'50201010-00',desc:'Travelling Expenses - Local'},
+ 'STO-FMHFWCROP-ALMED':{rc:'15-05-01-03',mfo:'200000-10000-9000',uacs:'50201010-00',desc:'Travelling Expenses - Local'},
+ 'LFPA-NSHP-ALMED':{rc:'22-01-01-03',mfo:'310500-20003-2000',uacs:'50201010-00',desc:'Travelling Expenses - Local'}
+};
+function applyFundMap(){
+ const m=FUND_MAP[val('fundCluster')]; if(!m)return;
+ set('responsibilityCenter',m.rc);set('mfoPap',m.mfo);set('uacs',m.uacs);
+}
+
+let step=1; const maxStep=8;
+const form=document.getElementById('tevForm');
+const money=n=>Number(n||0).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
+function clean(s){return (s||'').trim().replace(/[^\w]+/g,'_').replace(/^_+|_+$/g,'').toUpperCase()||'DESTINATION'}
+function val(name){return form.elements[name]?.value||''}
+function set(name,v){if(form.elements[name]) form.elements[name].value=v||''}
+function dateLabel(d){if(!d)return'';return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).replaceAll(' ','_').replace(',','')}
+function period(){let a=val('travelStart'),b=val('travelEnd');if(!a&&!b)return'';return a===b||!b?dateLabel(a):`${dateLabel(a)}-${dateLabel(b)}`}
+function total(){
+ let t=0; document.querySelectorAll('#itinTable tbody tr').forEach(r=>{['fare','perdiem','others'].forEach(c=>t+=Number(r.querySelector(`[data-col="${c}"]`)?.value||0))});
+ document.getElementById('itinTotal').textContent=money(t); ['dvAmount','backAmount','orsAmount','orsTotal','cnrrAmount'].forEach(n=>set(n,t.toFixed(2))); return t;
+}
+function sync(){
+ applyFundMap();
+ document.querySelectorAll('[data-sync]').forEach(x=>x.value=val(x.dataset.sync));
+ set('backPayee',val('payee'));set('orsPayee',val('payee'));set('orsRC',val('responsibilityCenter'));set('orsFund',val('fundCluster'));
+ set('orsTO',val('toNumber'));set('orsDate',val('dvDate')||val('toDate'));set('orsDestination',val('destination'));set('orsMFO',val('mfoPap'));
+ set('cnrrPayee',val('payee'));set('cnrrTO',val('toNumber'));set('cnrrDestination',val('destination'));set('accTO',val('toNumber'));set('accPeriod',period());set('accPurpose',val('purpose'));set('placesVisited',val('destination'));set('preparedBy',val('payee'));
+ const t=total(),dest=clean(val('destination')),folder=`${dest}_${period()||'DATE'}_${t.toFixed(2)}`;
+ document.getElementById('folderName').textContent=folder;
+ document.getElementById('summary').innerHTML=`<div><small>Payee</small><b>${val('payee')||'—'}</b></div><div><small>Destination</small><b>${val('destination')||'—'}</b></div><div><small>Amount</small><b>₱ ${money(t)}</b></div>`;
+}
+function show(n){step=Math.max(1,Math.min(maxStep,n));document.querySelectorAll('.step').forEach(x=>x.classList.toggle('active',+x.dataset.step===step));document.querySelectorAll('#steps button').forEach(x=>x.classList.toggle('active',+x.dataset.step===step));document.getElementById('prev').style.visibility=step===1?'hidden':'visible';document.getElementById('next').style.display=step===maxStep?'none':'inline-block';sync();window.scrollTo({top:80,behavior:'smooth'})}
+function addRow(data={}){
+ const tr=document.createElement('tr');tr.innerHTML=['date','route','departure','arrival','transport','fare','perdiem','others'].map(c=>`<td><input ${c==='date'?'type="date"':(['fare','perdiem','others'].includes(c)?'type="number" step="0.01" min="0"':'')} data-col="${c}" value="${data[c]||''}"></td>`).join('')+`<td><button type="button" class="remove">×</button></td>`;
+ tr.querySelector('.remove').onclick=()=>{tr.remove();sync()};tr.querySelectorAll('input').forEach(i=>i.oninput=sync);document.querySelector('#itinTable tbody').appendChild(tr);
+}
+addRow();document.getElementById('addItin').onclick=()=>addRow();
+document.getElementById('next').onclick=()=>show(step+1);document.getElementById('prev').onclick=()=>show(step-1);
+document.querySelectorAll('#steps button').forEach(b=>b.onclick=()=>show(+b.dataset.step));
+form.addEventListener('input',sync);form.addEventListener('change',sync);
+[['toFile','toFileName'],['itinFile','itinFileName']].forEach(([a,b])=>document.getElementById(a).onchange=e=>document.getElementById(b).textContent=e.target.files[0]?.name||'No file selected');
+document.getElementById('photos').onchange=e=>document.getElementById('photoCount').textContent=`${e.target.files.length} photo(s) selected`;
+function record(){
+ const data=Object.fromEntries(new FormData(form).entries());data.cnrrRows=[...document.querySelectorAll('#cnrrTable tbody tr')].map(r=>Object.fromEntries([...r.querySelectorAll('input')].map(i=>[i.dataset.cnrr,i.value])));data.itinerary=[...document.querySelectorAll('#itinTable tbody tr')].map(r=>Object.fromEntries([...r.querySelectorAll('input')].map(i=>[i.dataset.col,i.value])));data.total=total();data.folder=document.getElementById('folderName').textContent;return data;
+}
+document.getElementById('savePackage').onclick=()=>{localStorage.setItem('tev-current-record',JSON.stringify(record()));alert('Travel record saved in this browser.');};
+document.getElementById('exportJson').onclick=()=>{let r=record(),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(r,null,2)],{type:'application/json'}));a.download=r.folder+'_RECORD.json';a.click();URL.revokeObjectURL(a.href)};
+document.getElementById('newBtn').onclick=()=>{if(confirm('Start a new travel record?')){form.reset();document.querySelector('#itinTable tbody').innerHTML='';addRow();show(1)}};
+const saved=localStorage.getItem('tev-current-record'); if(saved){try{let r=JSON.parse(saved);for(const[k,v]of Object.entries(r)){if(form.elements[k]&&typeof v!=='object')form.elements[k].value=v}if(r.itinerary){document.querySelector('#itinTable tbody').innerHTML='';r.itinerary.forEach(addRow)}}catch(e){}}
+show(1);
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function preview(type){
+ sync(); const t=total(), panel=document.getElementById('previewPanel');
+ document.querySelectorAll('.previewBtn').forEach(b=>b.classList.toggle('selected',b.dataset.preview===type));
+ const head=`<div class="sheetPreview"><div class="agency">BUREAU OF SOILS AND WATER MANAGEMENT</div><h3>${esc(type)}</h3>`;
+ let body='';
+ if(type==='DV') body=`<div class="pgrid"><div class="label">Fund Cluster</div><div>${esc(val('fundCluster'))}</div><div class="label">Payee</div><div>${esc(val('payee'))}</div><div class="label">TIN / ID</div><div>${esc(val('tin'))} / ${esc(val('idNumber'))}</div><div class="label">TO No.</div><div>${esc(val('toNumber'))}</div><div class="label">Destination</div><div>${esc(val('destination'))}</div><div class="label">Responsibility Center</div><div>${esc(val('responsibilityCenter'))}</div><div class="label">MFO/PAP</div><div>${esc(val('mfoPap'))}</div><div class="label">Amount</div><div>₱ ${money(t)}</div><div class="label">Supervising Agriculturist</div><div>${esc(val('supervisor'))}</div></div>`;
+ if(type==='ORS') body=`<div class="pgrid"><div class="label">Payee</div><div>${esc(val('payee'))}</div><div class="label">Responsibility Center</div><div>${esc(val('responsibilityCenter'))}<br>${esc(val('fundCluster'))}</div><div class="label">TO No.</div><div>${esc(val('toNumber'))}</div><div class="label">Date</div><div>${esc(val('dvDate')||val('toDate'))}</div><div class="label">Destination</div><div>${esc(val('destination'))}</div><div class="label">MFO/PAP</div><div>${esc(val('mfoPap'))}</div><div class="label">UACS Object Code</div><div>${esc(val('uacs'))}</div><div class="label">Amount / Total</div><div>₱ ${money(t)}</div></div>`;
+ if(type==='ITINERARY'){let rows=[...document.querySelectorAll('#itinTable tbody tr')].map(r=>`<tr>${['date','route','departure','arrival','transport','fare','perdiem','others'].map(c=>`<td>${esc(r.querySelector(`[data-col="${c}"]`)?.value||'')}</td>`).join('')}</tr>`).join('');body=`<p><b>${esc(val('payee'))}</b> • ${esc(val('destination'))}</p><table><thead><tr><th>Date</th><th>Place/Route</th><th>Departure</th><th>Arrival</th><th>Transport</th><th>Fare</th><th>DTE</th><th>Others</th></tr></thead><tbody>${rows}</tbody></table><div class="total">Total: <b>₱ ${money(t)}</b></div>`}
+ if(type==='CNRR') body=`<div class="pgrid"><div class="label">Payee</div><div>${esc(val('payee'))}</div><div class="label">Amount</div><div>₱ ${money(t)}</div><div class="label">Particulars / Explanation</div><div>${esc(val('cnrrParticulars'))}</div></div>`;
+ if(type==='ACCOMPLISHMENT') body=`<div class="pgrid"><div class="label">Period</div><div>${esc(period())}</div><div class="label">T.O. No.</div><div>${esc(val('toNumber'))}</div><div class="label">Purpose</div><div>${esc(val('purpose'))}</div><div class="label">Places Visited</div><div>${esc(val('destination'))}</div><div class="label">Activities Undertaken</div><div>${esc(val('activities'))}</div><div class="label">Accomplishment</div><div>${esc(val('accomplishment'))}</div><div class="label">Remarks</div><div>${esc(val('remarks'))}</div><div class="label">Needed Action</div><div>${esc(val('neededAction'))}</div></div>`;
+ panel.innerHTML=head+body+'</div>';
+}
+document.querySelectorAll('.previewBtn').forEach(b=>b.addEventListener('click',()=>preview(b.dataset.preview)));
+
+function cnrrTotal(){
+ let t=0;document.querySelectorAll('#cnrrTable tbody [data-cnrr="amount"]').forEach(i=>t+=Number(i.value||0));
+ const el=document.getElementById('cnrrTotal');if(el)el.textContent=money(t);return t;
+}
+function addCnrrRow(data={}){
+ const tr=document.createElement('tr');
+ tr.innerHTML=`<td><input type="date" data-cnrr="date" value="${data.date||''}"></td><td><input data-cnrr="particulars" value="${data.particulars||''}" placeholder="e.g. tricycle fare"></td><td><input type="number" step="0.01" min="0" data-cnrr="amount" value="${data.amount||''}"></td><td><button type="button" class="remove">×</button></td>`;
+ tr.querySelector('.remove').onclick=()=>{tr.remove();cnrrTotal()};
+ tr.querySelectorAll('input').forEach(i=>i.addEventListener('input',cnrrTotal));
+ document.querySelector('#cnrrTable tbody').appendChild(tr);
+}
+if(document.getElementById('addCnrr')){addCnrrRow();document.getElementById('addCnrr').onclick=()=>addCnrrRow();}
+
+async function extractTO_legacy(file){
+ const status=document.getElementById('toDetectStatus'), sel=document.getElementById('employeeSelect');
+ status.className='detectStatus';status.textContent='Reading Approved TO...';
+ let quick=file.name.match(/(20\d{2}-\d{2}-\d{4,6})(?=_|\.|\s|$)/);
+ if(quick){set('toNumber',quick[1]);status.textContent='TO Number detected from filename. Reading the TO details...';}
+ if(!file){return}
+ if(file.type!=='application/pdf' && !file.name.toLowerCase().endsWith('.pdf')){
+   status.className='detectStatus warn';status.textContent='Automatic extraction currently supports text-based PDF TO. For scanned/image TO, OCR will be added in the next build.';
+   return;
+ }
+ try{
+   const pdfjsLib=await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs');
+   pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
+   const buf=await file.arrayBuffer(), pdf=await pdfjsLib.getDocument({data:buf}).promise;
+   let text='';
+   for(let n=1;n<=pdf.numPages;n++){const pg=await pdf.getPage(n),tc=await pg.getTextContent();text+=' '+tc.items.map(x=>x.str).join(' ');}
+   const flat=text.replace(/\s+/g,' ').trim();
+   const to=(flat.match(/(?:T\.?\s*O\.?|Travel\s*Order)\s*(?:No\.?|#|Number)?\s*[:\-]?\s*([A-Z0-9\-\/]+)/i)||[])[1]||'';
+   set('toNumber',to);
+   const dates=[...flat.matchAll(/\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+20\d{2}\b/gi)].map(m=>m[0]);
+   if(dates[0]){const d=new Date(dates[0]);if(!isNaN(d))set('travelStart',d.toISOString().slice(0,10));}
+   let candidates=[...new Set((flat.match(/\b[A-Z][A-Z.\-']+(?:\s+[A-Z][A-Z.\-']+){2,4}\b/g)||[])
+     .map(x=>x.trim()).filter(x=>x.length<55 && !/BUREAU|MANAGEMENT|DEPARTMENT|SECRETARY|TRAVEL ORDER|QUEZON CITY|REPUBLIC|PHILIPPINES/.test(x)))];
+   sel.innerHTML='';
+   if(candidates.length){
+     candidates.forEach(n=>{let o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o)});
+     sel.disabled=false;set('payee',candidates[0]);
+   }else{sel.innerHTML='<option value="">No employee name detected</option>';sel.disabled=true}
+   // Purpose and destination are format-dependent: capture common labeled sections when present.
+   const pm=flat.match(/Purpose(?:\s+of\s+Travel)?\s*[:\-]\s*(.{10,220}?)(?=\s(?:Destination|Place|Date|Period|Name|Employee)\s*[:\-]|$)/i);
+   if(pm)set('purpose',pm[1].trim());
+   const dm=flat.match(/(?:Destination|Place(?:s)?\s+to\s+Visit)\s*[:\-]\s*(.{3,140}?)(?=\s(?:Purpose|Date|Period|Name|Employee)\s*[:\-]|$)/i);
+   if(dm)set('destination',dm[1].trim());
+   status.className='detectStatus ok';
+   status.textContent=`TO read. ${candidates.length} possible employee name(s) detected${candidates.length>1?' — select the correct employee from the dropdown.':'.'} Review the extracted details before continuing.`;
+   sync();
+ }catch(e){
+   status.className='detectStatus warn';status.textContent='Could not automatically read this TO. It may be scanned/image-based or use a different PDF structure.';
+ }
+}
+const es=document.getElementById('employeeSelect');
+if(es)es.addEventListener('change',()=>sync());
+
+
+// v0.6 Approved TO reader tailored to the actual BSWM TO layout.
+// Supports text PDFs first; if the PDF is scanned, it renders pages and runs OCR.
+function normTOText(s){return String(s||'').replace(/\r/g,'\n').replace(/[ \t]+/g,' ').replace(/\n{2,}/g,'\n').trim()}
+function toISODate(s){
+ if(!s)return '';
+ let m=s.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](20\d{2})/);
+ if(m)return `${m[3]}-${String(m[1]).padStart(2,'0')}-${String(m[2]).padStart(2,'0')}`;
+ let d=new Date(s);return isNaN(d)?'':d.toISOString().slice(0,10)
+}
+function captureLabel(text,label,nextLabels){
+ const escLabel=label.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+ const next=nextLabels.map(x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|');
+ let re=new RegExp(escLabel+'\\s*:?\\s*([\\s\\S]*?)(?=\\n?\\s*(?:'+next+')\\s*:|$)','i');
+ let m=text.match(re);return m?m[1].replace(/\n/g,' ').replace(/\s+/g,' ').trim():'';
+}
+function extractNamesFromBSWMTO(text){
+ const upper=text.toUpperCase();
+ let block='';
+ let m=upper.match(/NAMES?\s+POSITION\s+MONTHLY\s+SALARY[\s\S]*?(?=OFFICIAL\s+STATION)/i);
+ if(m) block=m[0];
+ if(!block){
+   m=upper.match(/NAMES?[\s\S]*?(?=OFFICIAL\s+STATION)/i); if(m)block=m[0];
+ }
+ if(!block)return [];
+ let names=[];
+ // Name rows are before common position terms. Handles WARREN A. DEL ROSARIO and multiple rows.
+ const pos=/\b(?:AGRICULTURIST|ENGINEER|SCIENCE RESEARCH|PROJECT|ADMINISTRATIVE|SUPERVISING|SENIOR|CHIEF|OIC|DIRECTOR|TECHNICAL|LABORATORY|SOIL)\b/i;
+ for(const raw of block.split(/\n+/)){
+   let line=raw.trim().replace(/\s+/g,' ');
+   if(!line || /NAMES?|POSITION|MONTHLY|SALARY|STATUS|APPOINTMENT/.test(line))continue;
+   let before=line.split(pos)[0].trim();
+   if(before && /^[A-ZÑ][A-ZÑ.' -]{5,60}$/.test(before) && before.split(/\s+/).length>=2)names.push(before);
+ }
+ // OCR often collapses the row into one line.
+ if(!names.length){
+   let row=block.replace(/\n/g,' ').replace(/\s+/g,' ');
+   let mm=row.match(/(?:APPOINTMENT\s*)?([A-ZÑ][A-ZÑ.' -]{5,60}?)(?=\s+(?:AGRICULTURIST|ENGINEER|SCIENCE RESEARCH|PROJECT|ADMINISTRATIVE|SUPERVISING|SENIOR|CHIEF|OIC|DIRECTOR|TECHNICAL|LABORATORY|SOIL)\b)/i);
+   if(mm)names.push(mm[1].trim());
+ }
+ return [...new Set(names.map(n=>n.replace(/\s+/g,' ').trim()))];
+}
+function parseBSWMTO(raw){
+ const text=normTOText(raw), flat=text.replace(/\n/g,' ').replace(/\s+/g,' ');
+ let toNo='';
+ // Filename-style/visible TO number such as 2026-07-11246.
+ let m=flat.match(/\b(20\d{2}-\d{2}-\d{4,6})\b/); if(m)toNo=m[1];
+ if(!toNo){m=flat.match(/(?:TRAVEL\s*ORDER|T\.?\s*O\.?)\s*(?:NO\.?|#)?\s*[:\-]?\s*([A-Z0-9\-\/]+)/i);if(m)toNo=m[1]}
+ const labels=['Official Station','Departure Date','Return Date','Destination','Specific purpose of the trip','Objective(s)','Per diems expenses allowed','Assistant or laborers allowed','Appropriation to which travel should be charged','Remarks or special instruction','RECOMMENDING APPROVAL','APPROVED'];
+ let departure=captureLabel(text,'Departure Date',labels.filter(x=>x!=='Departure Date'));
+ let ret=captureLabel(text,'Return Date',labels.filter(x=>x!=='Return Date'));
+ let destination=captureLabel(text,'Destination',labels.filter(x=>x!=='Destination'));
+ let purpose=captureLabel(text,'Specific purpose of the trip',labels.filter(x=>x!=='Specific purpose of the trip'));
+ let names=extractNamesFromBSWMTO(text);
+ return {toNo,departure:toISODate(departure),returnDate:toISODate(ret),destination,purpose,names,text};
+}
+async function pdfText(file){
+ const pdfjsLib=window.pdfjsLib;
+ pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+ const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;
+ let text='';
+ for(let n=1;n<=pdf.numPages;n++){
+   const page=await pdf.getPage(n),tc=await page.getTextContent();
+   // preserve rough lines using transform Y positions
+   let lastY=null,line=[];
+   for(const it of tc.items){
+     let y=Math.round(it.transform?.[5]||0);
+     if(lastY!==null && Math.abs(y-lastY)>3){text+=line.join(' ')+'\n';line=[]}
+     line.push(it.str);lastY=y;
+   }
+   text+=line.join(' ')+'\n';
+ }
+ return {text,pdf};
+}
+async function ocrPdf(pdf,status){
+ let all='';
+ for(let n=1;n<=pdf.numPages;n++){
+   status.textContent=`Scanned TO detected. Reading page ${n} of ${pdf.numPages}...`;
+   const page=await pdf.getPage(n),vp=page.getViewport({scale:2});
+   const c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;
+   await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
+   const r=await Tesseract.recognize(c,'eng',{logger:m=>{if(m.status==='recognizing text')status.textContent=`Reading TO page ${n}: ${Math.round((m.progress||0)*100)}%`}});
+   all+=r.data.text+'\n';
+ }
+ return all;
+}
+async function ocrImage(file,status){
+ status.textContent='Reading scanned/image TO...';
+ const r=await Tesseract.recognize(file,'eng',{logger:m=>{if(m.status==='recognizing text')status.textContent=`Reading TO: ${Math.round((m.progress||0)*100)}%`}});
+ return r.data.text;
+}
+
+// v0.9 parser tuned against actual uploaded 2026-07-11246_signed.pdf.
+function parseActualBSWMTO(raw,fileName){
+ const s=String(raw||'').replace(/\r/g,'\n').replace(/[ \t]+/g,' ');
+ const flat=s.replace(/\n+/g,' ').replace(/\s+/g,' ').trim();
+ const r={toNo:'',departure:'',returnDate:'',destination:'',purpose:'',names:[],text:s};
+ let fm=String(fileName||'').match(/(20\d{2}-\d{2}-\d{4,6})(?=_|\.|\s|$)/);
+ let cm=flat.match(/Control\s*No\.?\s*:?\s*(20\d{2}-\d{2}-\d{4,6})/i);
+ r.toNo=(cm&&cm[1])||(fm&&fm[1])||'';
+
+ function get(label,next){
+   const re=new RegExp(label+'\\s*:?\\s*(.*?)(?=\\s+(?:'+next+')\\s*:|$)','i');
+   const m=flat.match(re);return m?m[1].trim():'';
+ }
+ r.departure=toISODate(get('Departure\\s*Date','Return\\s*Date'));
+ r.returnDate=toISODate(get('Return\\s*Date','Destination'));
+ r.destination=get('Destination','Specific\\s+purpose\\s+of\\s+the\\s+trip');
+ r.purpose=get('Specific\\s+purpose\\s+of\\s+the\\s+trip','Objective\\s*\\(s\\)|Objectives?');
+
+ // Actual form: NAMES | POSITION | MONTHLY SALARY | STATUS OF APPOINTMENT, then employee row.
+ let nb=flat.match(/NAMES?\s+POSITION\s+MONTHLY\s+SALARY\s+STATUS\s+OF\s+APPOINTMENT\s+(.*?)(?=\s+Official\s+Station)/i);
+ if(nb){
+   const block=nb[1];
+   const knownPos='AGRICULTURIST|ENGINEER|SCIENCE\\s+RESEARCH|PROJECT|ADMINISTRATIVE|SUPERVISING|SENIOR|CHIEF|TECHNICAL|LABORATORY|SOIL';
+   const rx=new RegExp('([A-ZÑ][A-ZÑ.\\' -]{4,70}?)(?=\\s+(?:'+knownPos+')\\b)','gi');
+   let m; while((m=rx.exec(block))!==null){
+     let n=m[1].replace(/\s+/g,' ').trim();
+     if(n.split(' ').length>=2)r.names.push(n.toUpperCase());
+   }
+ }
+ // Fallback for OCR where headings are imperfect: capture name immediately before AGRICULTURIST etc.
+ if(!r.names.length){
+   const rx=/([A-ZÑ][A-ZÑ.' -]{5,60}?)(?=\s+(?:AGRICULTURIST|ENGINEER|SCIENCE\s+RESEARCH|SUPERVISING|ADMINISTRATIVE)\b)/gi;
+   let m; while((m=rx.exec(flat))!==null){
+     let n=m[1].replace(/\b(?:NAMES?|APPOINTMENT|STATUS|SALARY|MONTHLY|POSITION)\b/gi,' ').replace(/\s+/g,' ').trim();
+     if(n.split(' ').length>=2 && n.length<60)r.names.push(n.toUpperCase());
+   }
+ }
+ r.names=[...new Set(r.names)];
+ return r;
+}
+
+async function extractTO_v2(file){
+ const status=document.getElementById('toDetectStatus'),sel=document.getElementById('employeeSelect');
+ if(!file)return;
+ status.className='detectStatus';status.textContent='Reading Approved TO...';
+ try{
+   let raw='',pdf=null;
+   if(file.type==='application/pdf'||file.name.toLowerCase().endsWith('.pdf')){
+     let r=await pdfText(file);raw=r.text;pdf=r.pdf;
+     if(
+       raw.replace(/\s/g,'').length<250 ||
+       !/Departure\s*Date/i.test(raw) ||
+       !/Destination/i.test(raw) ||
+       !/Specific\s+purpose/i.test(raw)
+     ){
+       status.textContent='The TO page is image/scanned. Starting OCR...';
+       raw=await ocrPdf(pdf,status);
+     }
+   }else if(file.type.startsWith('image/')||/\.(png|jpe?g)$/i.test(file.name)){
+     raw=await ocrImage(file,status);
+   }else{
+     status.className='detectStatus warn';status.textContent='Use PDF, JPG or PNG for automatic TO reading.';return;
+   }
+   let d=parseActualBSWMTO(raw,file.name);
+   // Fallback TO no. from filename, e.g. 2026-07-11246_signed.pdf
+   if(!d.toNo){let fm=file.name.match(/(20\d{2}-\d{2}-\d{4,6})(?=_|\.|\s|$)/);if(fm)d.toNo=fm[1]}
+   set('toNumber',d.toNo);set('travelStart',d.departure);set('destination',d.destination);set('purpose',d.purpose);
+   sel.innerHTML='';
+   if(d.names.length){
+     d.names.forEach(n=>{let o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o)});
+     sel.disabled=false;sel.value=d.names[0];
+   }else{sel.innerHTML='<option value="">No employee name detected</option>';sel.disabled=true}
+   const found=[d.toNo&&'TO Number',d.names.length&&`${d.names.length} employee name(s)`,d.departure&&'Departure Date',d.destination&&'Destination',d.purpose&&'Purpose'].filter(Boolean);
+   status.className=found.length>=4?'detectStatus ok':'detectStatus warn';
+   status.textContent=`Detected: ${found.join(', ')||'no fields'}. ${d.names.length>1?'Select the correct employee from the dropdown. ':''}Review the extracted details before continuing.`;
+   sync();
+ }catch(err){
+   status.className='detectStatus warn';status.textContent='TO could not be read automatically. Please check that the file is a clear PDF/JPG/PNG.';
+ }
+}
+
+
+// v0.7 robust BSWM parser: works even when PDF extraction/OCR collapses the page into one line.
+function parseBSWMTO_v7(raw,fileName){
+ const text=String(raw||'').replace(/\s+/g,' ').trim();
+ const result={toNo:'',departure:'',returnDate:'',destination:'',purpose:'',names:[],text};
+ let fm=String(fileName||'').match(/(20\d{2}-\d{2}-\d{4,6})(?=_|\.|\s|$)/);
+ let tm=text.match(/(?:TRAVEL\s*ORDER|T\.?\s*O\.?)\s*(?:NO\.?|#)?\s*[:\-]?\s*(20\d{2}-\d{2}-\d{4,6})/i) ||
+        text.match(/(20\d{2}-\d{2}-\d{4,6})/);
+ result.toNo=(tm&&tm[1])||(fm&&fm[1])||'';
+
+ function between(label,next){
+   let re=new RegExp(label+'\\s*:?\\s*(.*?)(?=\\s+(?:'+next+')\\s*:|$)','i');
+   let m=text.match(re);return m?m[1].trim():'';
+ }
+ result.departure=toISODate(between('Departure\\s*Date','Return\\s*Date'));
+ result.returnDate=toISODate(between('Return\\s*Date','Destination'));
+ result.destination=between('Destination','Specific\\s+purpose\\s+of\\s+the\\s+trip');
+ result.purpose=between('Specific\\s+purpose\\s+of\\s+the\\s+trip','Objective\\s*\\(s\\)|Objectives?');
+
+ // Pull names from the area between NAMES and Official Station.
+ let nm=text.match(/NAMES?\s+(?:POSITION\s+)?(?:MONTHLY\s+SALARY\s+)?(?:STATUS\s+OF\s+APPOINTMENT\s+)?(.*?)(?=\s+Official\s+Station\s*:)/i);
+ let block=nm?nm[1]:'';
+ if(block){
+   // Split before known position titles. Supports multiple employee rows.
+   let rx=/([A-ZÑ][A-ZÑ.' -]{4,70}?)(?=\s+(?:AGRICULTURIST|ENGINEER|SCIENCE\s+RESEARCH|PROJECT|ADMINISTRATIVE|SUPERVISING|SENIOR|CHIEF|TECHNICAL|LABORATORY|SOIL)\b)/gi;
+   let mm;while((mm=rx.exec(block))!==null){
+     let n=mm[1].replace(/\b(?:Permanent|Temporary|Contractual|Coterminous)\b/gi,'').trim();
+     if(n.split(/\s+/).length>=2 && !/POSITION|SALARY|STATUS|APPOINTMENT/.test(n))result.names.push(n.toUpperCase());
+   }
+ }
+ result.names=[...new Set(result.names)];
+ return result;
+}
+
+</script>
+
+<script>
+(function(){
+ const fileInput=document.getElementById('toFile');
+ const preview=document.getElementById('toPreview');
+ const status=document.getElementById('toDetectStatus');
+ const q=id=>document.getElementById(id);
+ function put(id,v){const e=q(id);if(e&&v)e.value=v;}
+ function get(id){const e=q(id);return e?e.value.trim():"";}
+ function syncFromExisting(){
+   put('hyTO', q('toNumber')?.value||'');
+   put('hyEmployee', q('payee')?.value||q('employeeSelect')?.value||'');
+   put('hyDeparture', q('travelStart')?.value||'');
+   put('hyReturn', q('travelEnd')?.value||'');
+   put('hyDestination', q('destination')?.value||'');
+   put('hyPurpose', q('purpose')?.value||'');
+ }
+ if(fileInput){
+   fileInput.addEventListener('change', function(){
+     const f=this.files&&this.files[0]; if(!f)return;
+     const url=URL.createObjectURL(f);
+     preview.innerHTML='';
+     if(f.type==='application/pdf'||/\.pdf$/i.test(f.name)){
+       const iframe=document.createElement('iframe');iframe.src=url;iframe.title='Travel Order PDF Preview';preview.appendChild(iframe);
+     }else if(f.type.startsWith('image/')){
+       const img=document.createElement('img');img.src=url;img.alt='Travel Order Preview';preview.appendChild(img);
+     }else{
+       preview.innerHTML='<div style="padding:24px">Preview is available for PDF/JPG/PNG files.</div>';
+     }
+     const fm=f.name.match(/(20\d{2}-\d{2}-\d{4,6})/);
+     if(fm&&!get('hyTO')) put('hyTO',fm[1]);
+     if(status){status.className='detectStatus ok';status.textContent='Travel Order loaded. Review the document preview and confirm/correct the details on the right.';}
+     setTimeout(syncFromExisting,150);
+   });
+ }
+ q('confirmTO')?.addEventListener('click',function(){
+   const vals={
+     to:get('hyTO'), emp:get('hyEmployee'), dep:get('hyDeparture'), ret:get('hyReturn'),
+     dest:get('hyDestination'), purpose:get('hyPurpose'), objective:get('hyObjective')
+   };
+   if(!vals.to||!vals.emp||!vals.dep||!vals.ret||!vals.dest||!vals.purpose){
+     alert('Please complete TO Number, Employee, Departure, Return, Destination, and Purpose before confirming.');
+     return;
+   }
+   put('toNumber',vals.to); put('payee',vals.emp); put('travelStart',vals.dep); put('travelEnd',vals.ret);
+   put('destination',vals.dest); put('purpose',vals.purpose);
+   const sel=q('employeeSelect');
+   if(sel){sel.innerHTML='';const o=document.createElement('option');o.value=vals.emp;o.textContent=vals.emp;sel.appendChild(o);sel.value=vals.emp;sel.disabled=false;}
+   try{ if(typeof sync==='function') sync(); }catch(e){}
+   q('confirmBanner').style.display='block';
+   if(status){status.className='detectStatus ok';status.textContent='Travel Order confirmed. Master travel details have been applied to the TEV record.';}
+   localStorage.setItem('tev_confirmed_to',JSON.stringify(vals));
+ });
+ const saved=localStorage.getItem('tev_confirmed_to');
+ if(saved){try{const v=JSON.parse(saved);put('hyTO',v.to);put('hyEmployee',v.emp);put('hyDeparture',v.dep);put('hyReturn',v.ret);put('hyDestination',v.dest);put('hyPurpose',v.purpose);put('hyObjective',v.objective);}catch(e){}}
+})();
+</script>
+
+</body></html>
